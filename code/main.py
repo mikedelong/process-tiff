@@ -1,8 +1,9 @@
 import logging
-from time import time
-from PIL import Image
-import numpy as np
 from glob import glob
+from time import time
+
+import numpy as np
+from PIL import Image
 
 if __name__ == '__main__':
     start_time = time()
