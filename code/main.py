@@ -1,5 +1,8 @@
 import logging
 from time import time
+from PIL import Image
+import numpy as np
+from glob import glob
 
 if __name__ == '__main__':
     start_time = time()
@@ -10,10 +13,17 @@ if __name__ == '__main__':
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
-    console_handler.setLevel(logging.DEBUG)
-    logger.debug('started')
+    console_handler.setLevel(logging.INFO)
+    logger.info('started')
 
-    logger.debug('done')
+    input_folder = '../data/'
+    input_files = input_folder + '*.tif'
+    for input_file in glob(input_files):
+        image = Image.open(input_file)
+        image_array = np.array(image)
+        logger.info('%s %s' % (input_file, image_array.shape))
+
+    logger.info('done')
     finish_time = time()
     elapsed_hours, elapsed_remainder = divmod(finish_time - start_time, 3600)
     elapsed_minutes, elapsed_seconds = divmod(elapsed_remainder, 60)
