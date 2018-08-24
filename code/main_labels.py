@@ -23,7 +23,8 @@ if __name__ == '__main__':
         logger.info(settings)
         image_files = settings['image_files']
         output_folder = settings['output_folder']
-
+        x_size = settings['x_size']
+        y_size = settings['y_size']
         archive = ZipFile(settings['zipfile'], 'r')
         type_id_counts = Counter()
         type_counts = Counter()
@@ -50,17 +51,32 @@ if __name__ == '__main__':
                     images_in_files[image_id] += 1
                     bounds_imcoords = properties_['bounds_imcoords']
                     [xmin, ymin, xmax, ymax] = [int(item) for item in bounds_imcoords.split(',')]
-                    logger.info('bounding box is %s' % str([xmin, ymin, xmax, ymax]))
+                    logger.info('bounding box is %s, is %d x %d,  %d total pixels' %
+                                (str([xmin, ymin, xmax, ymax]), xmax-xmin, ymax-ymin, (xmax-xmin) * (ymax-ymin)))
                     input_file = settings['image_folder'] + image_id
                     image = Image.open(input_file)
                     image_array = np.array(image)
-                    if xmax <= image_array.shape[0] and ymax <= image_array.shape[1]:
-                        image_slice = image_array[xmin:xmax, ymin:ymax, 0:3]
-                        output_filename = '{}{}.{}.{}.tif'.format(output_folder, image_id.replace('.tif', ''), index,
-                                                                  type_id_)
-                        logger.info('writing image section to %s' % output_filename)
-                        result = Image.fromarray(image_slice)
-                        result.save(output_filename)
+                    x_mid = (xmin + xmax)//2
+                    x_start = max(0, x_mid - x_size//2)
+                    x_stop = x_start + x_size
+                    if x_stop > image_array.shape[0]:
+                        x_stop = image_array.shape[0]-1
+                        x_start = x_stop - x_size
+                    y_mid = (ymin + ymax)//2
+                    y_start = max(0, y_mid - y_size//2)
+                    y_stop = y_start + y_size
+                    if y_stop > image_array.shape[1]:
+                        y_stop = image_array.shape[1]-1
+                        y_start = y_stop - y_size
+                    logger.info('adjusted bounding box is %s, is %d x %d,  %d total pixels' %
+                                (str([x_start, x_start, x_stop, y_stop]), x_stop-x_start,
+                                 y_stop-y_start, (x_stop-x_start) * (y_stop-y_start)))
+                    image_slice = image_array[x_start:x_stop, y_start:y_stop, 0:3]
+                    output_filename = '{}{}.{}.{}.tif'.format(output_folder, image_id.replace('.tif', ''), index,
+                                                              type_id_)
+                    logger.info('writing image section to %s' % output_filename)
+                    result = Image.fromarray(image_slice)
+                    result.save(output_filename)
 
         logger.info(type_id_counts)
         logger.info('type_id count %d' % len(type_id_counts))
