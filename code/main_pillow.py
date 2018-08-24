@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     x_slice_size = 400
     y_slice_size = 400
-    input_folder = '../data/'
+    input_folder = '../data/images/'
     output_folder = '../output/'
     input_files = input_folder + '*.tif'
     for input_file in glob(input_files):
