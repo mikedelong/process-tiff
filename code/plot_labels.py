@@ -3,8 +3,7 @@ from collections import Counter
 from json import load
 from time import time
 from zipfile import ZipFile
-from PIL import Image
-import numpy as np
+
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
@@ -66,7 +65,6 @@ if __name__ == '__main__':
 
                         quit()
 
-
                 if index == 0:
                     logger.info(feature)
 
@@ -76,8 +74,6 @@ if __name__ == '__main__':
         logger.info('image_id count: %d' % len(image_id_counts))
         logger.info(images_in_files)
         logger.info('we have %d images in our files' % len(images_in_files))
-
-
 
     logger.info('done')
     finish_time = time()
